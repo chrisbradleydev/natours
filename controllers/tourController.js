@@ -29,7 +29,6 @@ const checkBody = (req, res, next) => {
 };
 
 const checkId = (req, res, next, val) => {
-    console.log(`check tour id: ${val}`);
     if (req.params.id * 1 > tours.length - 1) {
         return res.status(404).json({
             status: 'fail',
@@ -42,9 +41,9 @@ const checkId = (req, res, next, val) => {
 // controllers
 const createTour = (req, res) => {
     const newId = tours[tours.length - 1].id + 1;
-    const newTour = Object.assign({ id: newId }, req.body);
+    const newTour = { ...req.body, id: newId };
     tours.push(newTour);
-    fs.writeFile(`${__dirname}/../dev-data/data/tours-simple.json`, JSON.stringify(tours), err => {
+    fs.writeFile(`${__dirname}/../dev-data/data/tours-simple.json`, JSON.stringify(tours), () => {
         res.status(201).json({
             status: 'success',
             data: { tour: newTour },
@@ -54,12 +53,11 @@ const createTour = (req, res) => {
 
 const deleteTour = (req, res) => {
     const id = req.params.id * 1;
-    const tour = tours.find(o => o.id === id);
     tours.splice(
         tours.findIndex(o => o.id === id),
         1,
     );
-    fs.writeFile(`${__dirname}/../dev-data/data/tours-simple.json`, JSON.stringify(tours), err => {
+    fs.writeFile(`${__dirname}/../dev-data/data/tours-simple.json`, JSON.stringify(tours), () => {
         res.status(204).json({
             status: 'success',
             data: null,
@@ -91,7 +89,7 @@ const updateTour = (req, res) => {
     Object.keys(req.body).forEach(key => validKeys.includes(key) || delete req.body[key]);
     const updatedTour = { ...tour, ...req.body, id };
     tours[tours.findIndex(o => o.id === id)] = updatedTour;
-    fs.writeFile(`${__dirname}/../dev-data/data/tours-simple.json`, JSON.stringify(tours), err => {
+    fs.writeFile(`${__dirname}/../dev-data/data/tours-simple.json`, JSON.stringify(tours), () => {
         res.status(201).json({
             status: 'success',
             data: { tour: updatedTour },
