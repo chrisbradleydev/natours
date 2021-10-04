@@ -9,12 +9,11 @@ mongoose.connect(uri).then(
     () => {
         console.log('db connection successful');
     },
-    err => {
-        console.error(err);
+    error => {
+        console.error(error);
     },
 );
 
 app.listen(port, () => {
-    // eslint-disable-next-line no-console
     console.log(`app is running in ${process.env.NODE_ENV} on port ${port}`);
 });
