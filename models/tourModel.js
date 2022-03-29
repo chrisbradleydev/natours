@@ -47,7 +47,7 @@ const tourSchema = new mongoose.Schema({
         type: Number,
         default: 0,
     },
-    startDate: [Date],
+    startDates: [Date],
     summary: {
         type: String,
         trim: true,
