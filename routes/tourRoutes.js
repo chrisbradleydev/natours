@@ -12,10 +12,10 @@ const {
 
 const router = express.Router();
 
-router.route('/').get(getAllTours).post(createTour);
-router.route('/:id').get(getTour).patch(updateTour).delete(deleteTour);
-router.route('/monthly-plan/:year').get(getMonthlyPlan);
 router.route('/top-5-cheap').get(aliasTop5Cheap, getAllTours);
 router.route('/tour-stats').get(getTourStats);
+router.route('/monthly-plan/:year').get(getMonthlyPlan);
+router.route('/').get(getAllTours).post(createTour);
+router.route('/:id').get(getTour).patch(updateTour).delete(deleteTour);
 
 module.exports = router;
