@@ -129,7 +129,7 @@ const getTourStats = async (req, res) => {
             },
             {
                 $group: {
-                    _id: '$difficulty',
+                    _id: { $toUpper: '$difficulty' },
                     avgPrice: { $avg: '$price' },
                     avgRating: { $avg: '$ratingsAverage' },
                     maxPrice: { $max: '$price' },
