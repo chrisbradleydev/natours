@@ -9,8 +9,8 @@ mongoose.connect(uri).then(
     () => {
         console.log('db connection successful');
     },
-    error => {
-        console.error(error);
+    err => {
+        console.error(err);
     },
 );
 
@@ -21,8 +21,8 @@ const importData = async () => {
     try {
         await Tour.create(tours);
         console.log('data successfully loaded');
-    } catch (error) {
-        console.error(error);
+    } catch (err) {
+        console.error(err);
     }
     process.exit();
 };
@@ -32,8 +32,8 @@ const deleteData = async () => {
     try {
         await Tour.deleteMany();
         console.log('data successfully deleted');
-    } catch (error) {
-        console.error(error);
+    } catch (err) {
+        console.error(err);
     }
     process.exit();
 };

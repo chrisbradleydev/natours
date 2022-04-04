@@ -9,8 +9,8 @@ mongoose.connect(uri).then(
     () => {
         console.log('db connection successful');
     },
-    error => {
-        console.error(error);
+    err => {
+        console.error(err);
     },
 );
 

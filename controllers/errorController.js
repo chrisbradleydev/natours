@@ -1,29 +1,29 @@
 const AppError = require('../utils/appError');
 
-const handleCastError = error => {
-    const message = `Invalid ${error.path}: ${error.value}.`;
+const handleCastError = err => {
+    const message = `Invalid ${err.path}: ${err.value}.`;
     return new AppError(message, 400);
 };
 
-const sendErrorDev = (error, res) => {
-    res.status(error.statusCode).json({
-        status: error.status,
-        message: error.message,
-        isOperational: error.isOperational,
-        stack: error.stack,
+const sendErrorDev = (err, res) => {
+    res.status(err.statusCode).json({
+        status: err.status,
+        message: err.message,
+        isOperational: err.isOperational,
+        stack: err.stack,
     });
 };
 
-const sendErrorProd = (error, res) => {
-    if (error.isOperational) {
+const sendErrorProd = (err, res) => {
+    if (err.isOperational) {
         // send operational error to client
-        res.status(error.statusCode).json({
-            status: error.status,
-            message: error.message,
+        res.status(err.statusCode).json({
+            status: err.status,
+            message: err.message,
         });
     } else {
         // withhold unknown errors from client
-        console.error('💥💥💥', error);
+        console.error('💥💥💥', err);
         res.status(500).json({
             status: 'error',
             message: 'Something went wrong!',
@@ -31,18 +31,18 @@ const sendErrorProd = (error, res) => {
     }
 };
 
-module.exports = (error, req, res, next) => {
-    // console.log(error.stack);
-    error.statusCode = error.statusCode || 500;
-    error.status = error.status || 'error';
+module.exports = (err, req, res, next) => {
+    // console.log(err.stack);
+    err.statusCode = err.statusCode || 500;
+    err.status = err.status || 'error';
 
     if (process.env.NODE_ENV === 'development') {
-        sendErrorDev(error, res);
+        sendErrorDev(err, res);
     } else if (process.env.NODE_ENV === 'production') {
-        let errorObj = { ...error };
-        if (error.name === 'CastError') {
-            errorObj = handleCastError(error);
+        let errObj = { ...err };
+        if (err.name === 'CastError') {
+            errObj = handleCastError(err);
         }
-        sendErrorProd(errorObj, res);
+        sendErrorProd(errObj, res);
     }
 };
