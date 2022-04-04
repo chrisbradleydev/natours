@@ -1,5 +1,13 @@
 require('dotenv').config();
 const mongoose = require('mongoose');
+
+// handle uncaught exceptions
+process.on('uncaughtException', err => {
+    console.log('UNCAUGHT EXCEPTION! 💥💥💥 Shutting down...');
+    console.log(err.name, err.message);
+    process.exit(1);
+});
+
 const app = require('./app');
 
 const uri = process.env.DATABASE.replace('<PASSWORD>', process.env.DATABASE_PASSWORD);
