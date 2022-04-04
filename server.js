@@ -14,6 +14,16 @@ mongoose.connect(uri).then(
     },
 );
 
-app.listen(port, () => {
+const server = app.listen(port, () => {
     console.log(`app is running in ${process.env.NODE_ENV} on port ${port}`);
+});
+
+// handle unhandled promise rejections
+process.on('unhandledRejection', err => {
+    console.log('UNHANDLED REJECTION! 💥💥💥 Shutting down...');
+    console.log(err.name, err.message);
+    // gracefully shutdown server
+    server.close(() => {
+        process.exit(1);
+    });
 });
