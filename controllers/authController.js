@@ -11,6 +11,15 @@ const signToken = id =>
         expiresIn: process.env.JWT_EXPIRES_IN,
     });
 
+const createAndSendToken = (user, statusCode, res) => {
+    const token = signToken(user._id);
+    res.status(statusCode).json({
+        status: 'success',
+        token,
+        data: { user },
+    });
+};
+
 const forgotPassword = catchAsync(async (req, res, next) => {
     // get user by email
     const user = await User.findOne({ email: req.body.email });
@@ -59,11 +68,7 @@ const login = catchAsync(async (req, res, next) => {
     }
 
     // send token to client
-    const token = signToken(user._id);
-    res.status(200).json({
-        status: 'success',
-        token,
-    });
+    createAndSendToken(user, 200, res);
 });
 
 const protect = catchAsync(async (req, res, next) => {
@@ -111,11 +116,7 @@ const resetPassword = catchAsync(async (req, res, next) => {
     await user.save();
 
     // send new token to client
-    const token = signToken(user._id);
-    res.status(200).json({
-        status: 'success',
-        token,
-    });
+    createAndSendToken(user, 200, res);
 });
 
 const restrictTo =
@@ -134,14 +135,25 @@ const signup = catchAsync(async (req, res, next) => {
         password: req.body.password,
         passwordConfirm: req.body.passwordConfirm,
     });
+    createAndSendToken(newUser, 201, res);
+});
 
-    const token = signToken(newUser._id);
+const updatePassword = catchAsync(async (req, res, next) => {
+    // get user from collection
+    const user = await User.findById(req.user.id).select('+password');
 
-    res.status(201).json({
-        status: 'success',
-        token,
-        data: { user: newUser },
-    });
+    // check if password is correct
+    if (!(await user.correctPassword(req.body.passwordCurrent, user.password))) {
+        return next(new AppError('Incorrect password!', 401));
+    }
+
+    // update password
+    user.password = req.body.password;
+    user.passwordConfirm = req.body.passwordConfirm;
+    await user.save();
+
+    // send token to client
+    createAndSendToken(user, 200, res);
 });
 
 module.exports = {
@@ -151,4 +163,5 @@ module.exports = {
     resetPassword,
     restrictTo,
     signup,
+    updatePassword,
 };
