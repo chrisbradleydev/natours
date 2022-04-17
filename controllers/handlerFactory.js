@@ -31,9 +31,14 @@ const getAll = Model =>
         if (req.params.tourId) {
             filter = { tour: req.params.tourId };
         }
+
         // construct query using APIFeatures class
         const features = new APIFeatures(Model.find(filter), req.query).filter().limit().paginate().sort();
+
+        // output query execution stats
+        // const doc = await features.query.explain();
         const doc = await features.query;
+
         res.status(200).json({
             status: 'success',
             results: doc.length,
