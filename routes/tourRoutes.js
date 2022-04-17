@@ -10,8 +10,11 @@ const {
     getTourStats,
     updateTour,
 } = require('../controllers/tourController');
+const reviewRouter = require('./reviewRoutes');
 
 const router = express.Router();
+
+router.use('/:tourId/reviews', reviewRouter);
 
 router.route('/top-5-cheap').get(aliasTop5Cheap, getAllTours);
 router.route('/tour-stats').get(getTourStats);
