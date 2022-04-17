@@ -1,5 +1,6 @@
 const crypto = require('crypto');
 const { promisify } = require('util');
+const ms = require('ms');
 const jwt = require('jsonwebtoken');
 const User = require('../models/userModel');
 const catchAsync = require('../utils/catchAsync');
@@ -13,6 +14,16 @@ const signToken = id =>
 
 const createAndSendToken = (user, statusCode, res) => {
     const token = signToken(user._id);
+
+    res.cookie('jwt', token, {
+        expires: new Date(Date.now() + ms(process.env.JWT_EXPIRES_IN)),
+        httpOnly: true,
+        secure: process.env.NODE_ENV === 'production',
+    });
+
+    // remove password from output
+    user.password = undefined;
+
     res.status(statusCode).json({
         status: 'success',
         token,
