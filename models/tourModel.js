@@ -30,6 +30,19 @@ const tourSchema = new mongoose.Schema(
             required: [true, 'tour cover image required'],
         },
         images: [String],
+        locations: [
+            {
+                type: {
+                    type: String,
+                    default: 'Point',
+                    enum: ['Point'],
+                },
+                coordinates: [Number],
+                address: String,
+                description: String,
+                day: Number,
+            },
+        ],
         maxGroupSize: {
             type: Number,
             required: [true, 'tour max group size required'],
@@ -73,6 +86,17 @@ const tourSchema = new mongoose.Schema(
         },
         slug: String,
         startDates: [Date],
+        startLocation: {
+            // GeoJSON
+            type: {
+                type: String,
+                default: 'Point',
+                enum: ['Point'],
+            },
+            coordinates: [Number],
+            address: String,
+            description: String,
+        },
         summary: {
             type: String,
             trim: true,
