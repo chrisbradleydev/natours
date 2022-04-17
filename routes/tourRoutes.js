@@ -1,25 +1,30 @@
 const express = require('express');
-const { protect, restrictTo } = require('../controllers/authController');
-const {
-    aliasTop5Cheap,
-    createTour,
-    deleteTour,
-    getAllTours,
-    getMonthlyPlan,
-    getTour,
-    getTourStats,
-    updateTour,
-} = require('../controllers/tourController');
+const authController = require('../controllers/authController');
+const tourController = require('../controllers/tourController');
 const reviewRouter = require('./reviewRoutes');
 
 const router = express.Router();
 
+// route to review routes
 router.use('/:tourId/reviews', reviewRouter);
 
-router.route('/top-5-cheap').get(aliasTop5Cheap, getAllTours);
-router.route('/tour-stats').get(getTourStats);
-router.route('/monthly-plan/:year').get(getMonthlyPlan);
-router.route('/').get(protect, getAllTours).post(createTour);
-router.route('/:id').get(getTour).patch(updateTour).delete(protect, restrictTo('admin', 'lead-guide'), deleteTour);
+router.route('/top-5-cheap').get(tourController.aliasTop5Cheap, tourController.getAllTours);
+router.route('/tour-stats').get(tourController.getTourStats);
+router
+    .route('/monthly-plan/:year')
+    .get(
+        authController.protect,
+        authController.restrictTo('admin', 'lead-guide', 'guide'),
+        tourController.getMonthlyPlan,
+    );
+router
+    .route('/')
+    .get(tourController.getAllTours)
+    .post(authController.protect, authController.restrictTo('admin', 'lead-guide'), tourController.createTour);
+router
+    .route('/:id')
+    .get(tourController.getTour)
+    .patch(authController.protect, authController.restrictTo('admin', 'lead-guide'), tourController.updateTour)
+    .delete(authController.protect, authController.restrictTo('admin', 'lead-guide'), tourController.deleteTour);
 
 module.exports = router;
