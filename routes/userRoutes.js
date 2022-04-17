@@ -4,6 +4,7 @@ const {
     deleteMe,
     deleteUser,
     getAllUsers,
+    getMe,
     getUser,
     updateMe,
     updateUser,
@@ -24,6 +25,7 @@ router.post('/signup', signup);
 router.post('/forgotPassword', forgotPassword);
 router.patch('/resetPassword/:token', resetPassword);
 router.patch('/updateMyPassword', protect, updatePassword);
+router.get('/me', protect, getMe, getUser);
 router.patch('/updateMe', protect, updateMe);
 router.delete('/deleteMe', protect, deleteMe);
 router.route('/').get(getAllUsers).post(createUser);

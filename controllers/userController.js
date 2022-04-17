@@ -14,6 +14,12 @@ const filterObj = (obj, ...allowedFields) => {
     return newObj;
 };
 
+// route middleware
+const getMe = (req, res, next) => {
+    req.params.id = req.user.id;
+    next();
+};
+
 const deleteUser = factory.deleteOne(User);
 const getAllUsers = factory.getAll(User);
 const getUser = factory.getOne(User);
@@ -57,6 +63,7 @@ module.exports = {
     deleteMe,
     deleteUser,
     getAllUsers,
+    getMe,
     getUser,
     updateMe,
     updateUser,
