@@ -33,6 +33,9 @@ const reviewSchema = new mongoose.Schema(
     },
 );
 
+// compound index, each user can only review a tour once
+reviewSchema.index({ tour: 1, user: 1 }, { unique: true });
+
 // statics are used to create methods on the model
 reviewSchema.statics.calcAverageRatings = async function (tourId) {
     const stats = await this.aggregate([
