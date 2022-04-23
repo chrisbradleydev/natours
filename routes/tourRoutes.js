@@ -19,6 +19,8 @@ router
     );
 // /tours-within/400/center/34.111745,-118.113491/unit/mi
 router.route('/tours-within/:distance/center/:latlng/unit/:unit').get(tourController.getToursWithin);
+// /distances/34.111745,-118.113491/unit/mi
+router.route('/distances/:latlng/unit/:unit').get(tourController.getDistances);
 router
     .route('/')
     .get(tourController.getAllTours)
