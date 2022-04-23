@@ -1,11 +1,11 @@
 footer.footer
   .footer__logo
-    img(src='img/logo-green.png' alt='Natours logo')
+    img(src='/img/logo-green.png' alt='Natours logo')
   ul.footer__nav
     li: a(href='#') About us
     li: a(href='#') Download app
     li: a(href='#') Become a guide
     li: a(href='#') Careers
     li: a(href='#') Contact
-  - const date = new Date()
-  p.footer__copyright &copy; #{date.getFullYear()} Jonas Schmedtmann | All rights reserved
+  - const thisYear = new Date().getFullYear()
+  p.footer__copyright &copy; #{thisYear} Jonas Schmedtmann | All rights reserved
