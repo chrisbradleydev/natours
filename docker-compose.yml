@@ -1,0 +1,27 @@
+services:
+  nginx:
+    build: ./.docker/nginx
+    ports:
+      - 80:80
+      - 443:443
+    networks:
+      default:
+        aliases:
+          - natours.test
+    volumes:
+      - .:/var/www/app
+      - ./.docker/nginx/certs:/etc/nginx/certs
+      - ./.docker/nginx/conf.d:/etc/nginx/conf.d
+    depends_on:
+      - app
+  app:
+    build:
+      context: .
+    ports:
+      - 3000:3000
+    working_dir: /var/www/app
+    volumes:
+      - .:/var/www/app
+    environment:
+      NODE_ENV: development
+    restart: always
