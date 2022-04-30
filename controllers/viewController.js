@@ -4,9 +4,15 @@ const catchAsyc = require('../utils/catchAsync');
 
 const getIndex = catchAsyc(async (req, res, next) => {
     const tours = await Tour.find();
-    res.render('index', {
+    res.status(200).render('index', {
         title: 'All tours',
         tours,
+    });
+});
+
+const getLoginForm = catchAsyc(async (req, res, next) => {
+    res.status(200).render('login', {
+        title: 'Log in',
     });
 });
 
@@ -28,5 +34,6 @@ const getTour = catchAsyc(async (req, res, next) => {
 
 module.exports = {
     getIndex,
+    getLoginForm,
     getTour,
 };
