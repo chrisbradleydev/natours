@@ -1,4 +1,5 @@
 const path = require('path');
+const crypto = require('crypto');
 const express = require('express');
 const morgan = require('morgan');
 const rateLimit = require('express-rate-limit');
@@ -14,6 +15,9 @@ const reviewRouter = require('./routes/reviewRoutes');
 const viewRouter = require('./routes/viewRoutes');
 
 const app = express();
+app.locals.env = {
+    MAPBOX_TOKEN: process.env.MAPBOX_TOKEN,
+};
 
 // set view engine
 app.set('view engine', 'pug');
@@ -24,7 +28,66 @@ app.set('views', path.join(__dirname, 'views'));
 app.use(express.static(path.join(__dirname, 'public')));
 
 // set security HTTP headers
-app.use(helmet());
+app.use((req, res, next) => {
+    res.locals.nonce = crypto.randomBytes(16).toString('base64');
+    next();
+});
+const allowedHosts = ['https://*.mapbox.com/'];
+const selfAllowed = ["'self'", ...allowedHosts];
+const strictNonceSrc = ["'strict-dynamic'", (req, res) => `'nonce-${res.locals.nonce}'`];
+app.disable('x-powered-by');
+app.use(
+    helmet({
+        // https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Security-Policy
+        contentSecurityPolicy: {
+            // useDefaults: true,
+            directives: {
+                baseUri: ["'self'"],
+                childSrc: ["'self'"],
+                connectSrc: allowedHosts,
+                defaultSrc: ["'self'"],
+                fontSrc: ["'self'"],
+                formAction: ["'self'"],
+                frameAncestors: ["'self'"],
+                frameSrc: ["'self'"],
+                imgSrc: ['data:', ...selfAllowed],
+                manifestSrc: ["'self'"],
+                mediaSrc: ["'self'"],
+                objectSrc: ["'none'"],
+                prefetchSrc: ["'self'"],
+                // reportUri: '/csp-violation',
+                scriptSrc: strictNonceSrc,
+                scriptSrcAttr: selfAllowed,
+                scriptSrcElem: selfAllowed,
+                styleSrc: strictNonceSrc,
+                styleSrcAttr: selfAllowed,
+                styleSrcElem: selfAllowed,
+                workerSrc: ['blob:', ...selfAllowed],
+            },
+            // reportOnly: true,
+        },
+        // https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Cross-Origin-Embedder-Policy
+        crossOriginEmbedderPolicy: false,
+        // https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Cross-Origin-Resource-Policy
+        crossOriginResourcePolicy: {
+            policy: 'cross-origin',
+        },
+        // https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Strict-Transport-Security
+        hsts: {
+            maxAge: 60 * 60 * 24 * 365,
+            includeSubDomains: true,
+            preload: true,
+        },
+        // https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Referrer-Policy
+        referrerPolicy: {
+            policy: ['no-referrer', 'strict-origin-when-cross-origin'],
+        },
+    }),
+);
+// app.route('/csp-violation').post((req, res) => {
+//     console.log('CSP Violation: ', req.body || 'No request body');
+//     res.status(200).send();
+// });
 
 // development logging
 if (process.env.NODE_ENV === 'development') {

@@ -1,3 +1,27 @@
+@font-face {
+    font-display: swap;
+    font-family: Lato;
+    font-style: normal;
+    font-weight: normal;
+    src: url('/fonts/Lato-Regular.woff2') format('woff2'), url('/fonts/Lato-Regular.woff') format('woff');
+}
+
+@font-face {
+    font-display: swap;
+    font-family: Lato;
+    font-style: italic;
+    font-weight: normal;
+    src: url('/fonts/Lato-Italic.woff2') format('woff2'), url('/fonts/Lato-Italic.woff') format('woff');
+}
+
+@font-face {
+    font-display: swap;
+    font-family: Lato;
+    font-style: normal;
+    font-weight: 700;
+    src: url('/fonts/Lato-Bold.woff2') format('woff2'), url('/fonts/Lato-Bold.woff') format('woff');
+}
+
 :root {
     --section-rotate: 9vw;
 }
