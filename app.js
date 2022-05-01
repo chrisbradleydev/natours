@@ -71,7 +71,7 @@ app.use(
         crossOriginEmbedderPolicy: false,
         // https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Cross-Origin-Resource-Policy
         crossOriginResourcePolicy: {
-            policy: 'cross-origin',
+            policy: 'same-origin',
         },
         // https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Strict-Transport-Security
         hsts: {
