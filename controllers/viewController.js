@@ -2,6 +2,12 @@ const Tour = require('../models/tourModel');
 const AppError = require('../utils/appError');
 const catchAsyc = require('../utils/catchAsync');
 
+const getAccount = (req, res) => {
+    res.status(200).render('account', {
+        title: 'Account',
+    });
+};
+
 const getIndex = catchAsyc(async (req, res, next) => {
     const tours = await Tour.find();
     res.status(200).render('index', {
@@ -33,6 +39,7 @@ const getTour = catchAsyc(async (req, res, next) => {
 });
 
 module.exports = {
+    getAccount,
     getIndex,
     getLoginForm,
     getTour,
