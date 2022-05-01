@@ -2,11 +2,14 @@
 import '@babel/polyfill';
 import { displayMap } from './mapbox';
 import { login, logout } from './login';
+import { updateSettings } from './updateSettings';
 
 // dom elements
-const loginForm = document.querySelector('.form');
-const logoutBtn = document.querySelector('.nav__el--logout');
 const mapbox = document.getElementById('map');
+const loginForm = document.querySelector('.form--login');
+const logoutBtn = document.querySelector('.nav__el--logout');
+const userDataForm = document.querySelector('.form-user-data');
+const userPasswordForm = document.querySelector('.form-user-password');
 const popupCloseButtons = document.getElementsByClassName('mapboxgl-popup-close-button');
 
 if (mapbox) {
@@ -17,14 +20,46 @@ if (mapbox) {
 if (loginForm) {
     loginForm.addEventListener('submit', event => {
         event.preventDefault();
-        const email = document.querySelector('#email').value;
-        const password = document.querySelector('#password').value;
+        const email = document.getElementById('email').value;
+        const password = document.getElementById('password').value;
         login(email, password);
     });
 }
 
 if (logoutBtn) {
     logoutBtn.addEventListener('click', logout);
+}
+
+if (userDataForm) {
+    userDataForm.addEventListener('submit', event => {
+        event.preventDefault();
+        const name = document.getElementById('name').value;
+        const email = document.getElementById('email').value;
+        updateSettings({ name, email }, 'data');
+    });
+}
+
+if (userPasswordForm) {
+    userPasswordForm.addEventListener('submit', async event => {
+        event.preventDefault();
+        const saveBtnElem = document.querySelector('.btn--save-password');
+        const saveBtnText = saveBtnElem.textContent;
+        saveBtnElem.textContent = 'Updating...';
+
+        const passwordCurrentElem = document.getElementById('password-current');
+        const passwordElem = document.getElementById('password');
+        const passwordConfirmElem = document.getElementById('password-confirm');
+
+        const passwordCurrent = passwordCurrentElem.value;
+        const password = passwordElem.value;
+        const passwordConfirm = passwordConfirmElem.value;
+        await updateSettings({ passwordCurrent, password, passwordConfirm }, 'password');
+
+        saveBtnElem.textContent = saveBtnText;
+        passwordCurrentElem.value = '';
+        passwordElem.value = '';
+        passwordConfirmElem.value = '';
+    });
 }
 
 if (popupCloseButtons) {
