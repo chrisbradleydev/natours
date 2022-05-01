@@ -64,6 +64,34 @@ const forgotPassword = catchAsync(async (req, res, next) => {
     }
 });
 
+// only for rendered pages, no errors
+const isLoggedIn = async (req, res, next) => {
+    if (req.cookies.jwt) {
+        try {
+            // validate token
+            const decoded = await promisify(jwt.verify)(req.cookies.jwt, process.env.JWT_SECRET);
+
+            // check if user still exists
+            const currentUser = await User.findById(decoded.id);
+            if (!currentUser) {
+                return next();
+            }
+
+            // check if user changed password after the token was issued
+            if (currentUser.changedPasswordAfter(decoded.iat)) {
+                return next();
+            }
+
+            // user is logged in
+            res.locals.user = currentUser;
+            return next();
+        } catch (err) {
+            return next();
+        }
+    }
+    next();
+};
+
 const login = catchAsync(async (req, res, next) => {
     const { email, password } = req.body;
 
@@ -82,12 +110,25 @@ const login = catchAsync(async (req, res, next) => {
     createAndSendToken(user, 200, res);
 });
 
+const logout = catchAsync(async (req, res, next) => {
+    res.cookie('jwt', 'logout', {
+        expires: new Date(Date.now() + 1000),
+        httpOnly: true,
+    });
+    res.status(200).json({
+        status: 'success',
+    });
+});
+
 const protect = catchAsync(async (req, res, next) => {
     // check if token exists
     let token;
     if (req.headers.authorization && req.headers.authorization.startsWith('Bearer')) {
         token = req.headers.authorization.split(' ')[1];
+    } else if (req.cookies.jwt) {
+        token = req.cookies.jwt;
     }
+
     if (!token) {
         return next(new AppError('You are not logged in! Please log in to get access.', 401));
     }
@@ -169,7 +210,9 @@ const updatePassword = catchAsync(async (req, res, next) => {
 
 module.exports = {
     forgotPassword,
+    isLoggedIn,
     login,
+    logout,
     protect,
     resetPassword,
     restrictTo,
