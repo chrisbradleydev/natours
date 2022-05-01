@@ -80,7 +80,7 @@ const resizeUserPhoto = catchAsync(async (req, res, next) => {
     req.file.filename = `user-${req.user.id}-${Date.now()}.jpeg`;
 
     // image processing
-    sharp(req.file.buffer)
+    await sharp(req.file.buffer)
         .resize(500, 500)
         .toFormat('jpeg')
         .jpeg({ quality: 90 })
