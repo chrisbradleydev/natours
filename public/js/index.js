@@ -31,18 +31,26 @@ if (logoutBtn) {
 }
 
 if (userDataForm) {
-    userDataForm.addEventListener('submit', event => {
+    userDataForm.addEventListener('submit', async event => {
         event.preventDefault();
-        const name = document.getElementById('name').value;
-        const email = document.getElementById('email').value;
-        updateSettings({ name, email }, 'data');
+        const saveBtnElem = document.querySelector('.btn--update-profile');
+        const saveBtnText = saveBtnElem.textContent;
+        saveBtnElem.textContent = 'Updating...';
+
+        const form = new FormData();
+        form.append('name', document.getElementById('name').value);
+        form.append('email', document.getElementById('email').value);
+        form.append('photo', document.getElementById('photo').files[0]);
+        await updateSettings(form, 'profile');
+
+        saveBtnElem.textContent = saveBtnText;
     });
 }
 
 if (userPasswordForm) {
     userPasswordForm.addEventListener('submit', async event => {
         event.preventDefault();
-        const saveBtnElem = document.querySelector('.btn--save-password');
+        const saveBtnElem = document.querySelector('.btn--update-password');
         const saveBtnText = saveBtnElem.textContent;
         saveBtnElem.textContent = 'Updating...';
 
