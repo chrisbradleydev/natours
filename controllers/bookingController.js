@@ -2,6 +2,14 @@ const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 const Booking = require('../models/bookingModel');
 const Tour = require('../models/tourModel');
 const catchAsync = require('../utils/catchAsync');
+const factory = require('./handlerFactory');
+
+// route middleware
+const createBooking = factory.createOne(Booking);
+const deleteBooking = factory.deleteOne(Booking);
+const getAllBookings = factory.getAll(Booking);
+const getBooking = factory.getOne(Booking);
+const updateBooking = factory.updateOne(Booking);
 
 const createBookingCheckout = catchAsync(async (req, res, next) => {
     // temporary solution, not secure, anyone can make a booking without paying
@@ -52,6 +60,11 @@ const getCheckoutSession = catchAsync(async (req, res, next) => {
 });
 
 module.exports = {
+    createBooking,
     createBookingCheckout,
+    deleteBooking,
+    getAllBookings,
+    getBooking,
     getCheckoutSession,
+    updateBooking,
 };
