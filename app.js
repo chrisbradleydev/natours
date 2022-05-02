@@ -13,6 +13,7 @@ const globalErrorHandler = require('./controllers/errorController');
 const tourRouter = require('./routes/tourRoutes');
 const userRouter = require('./routes/userRoutes');
 const reviewRouter = require('./routes/reviewRoutes');
+const bookingRouter = require('./routes/bookingRoutes');
 const viewRouter = require('./routes/viewRoutes');
 
 const app = express();
@@ -33,7 +34,7 @@ app.use((req, res, next) => {
     res.locals.nonce = crypto.randomBytes(16).toString('base64');
     next();
 });
-const allowedHosts = ['https://*.mapbox.com/'];
+const allowedHosts = ['https://*.mapbox.com/', 'https://js.stripe.com/'];
 const selfAllowed = ["'self'", ...allowedHosts];
 const strictNonceSrc = ["'strict-dynamic'", (req, res) => `'nonce-${res.locals.nonce}'`];
 app.disable('x-powered-by');
@@ -50,7 +51,7 @@ app.use(
                 fontSrc: ["'self'"],
                 formAction: ["'self'"],
                 frameAncestors: ["'self'"],
-                frameSrc: ["'self'"],
+                frameSrc: selfAllowed,
                 imgSrc: ['data:', ...selfAllowed],
                 manifestSrc: ["'self'"],
                 mediaSrc: ["'self'"],
@@ -134,6 +135,7 @@ app.use((req, res, next) => {
 app.use('/api/v1/tours', tourRouter);
 app.use('/api/v1/users', userRouter);
 app.use('/api/v1/reviews', reviewRouter);
+app.use('/api/v1/bookings', bookingRouter);
 app.use('/', viewRouter);
 
 // handle unknown routes
