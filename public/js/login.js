@@ -3,13 +3,11 @@ import 'dotenv/config';
 import axios from 'axios';
 import { showAlert } from './alerts';
 
-const url = process.env.APP_URL;
-
 export const login = async (email, password) => {
     try {
         const res = await axios({
             method: 'post',
-            url: `${url}/api/v1/users/login`,
+            url: '/api/v1/users/login',
             data: {
                 email,
                 password,
@@ -30,7 +28,7 @@ export const logout = async () => {
     try {
         const res = await axios({
             method: 'get',
-            url: `${url}/api/v1/users/logout`,
+            url: '/api/v1/users/logout',
         });
         if (res.data.status === 'success') {
             showAlert('success', 'You are logged out.');

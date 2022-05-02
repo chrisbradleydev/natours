@@ -44,7 +44,10 @@ const forgotPassword = catchAsync(async (req, res, next) => {
 
     // send email with token
     try {
-        await new Email(user, `${process.env.APP_URL}/api/v1/users/resetPassword/${resetToken}`).sendPasswordReset();
+        await new Email(
+            user,
+            `${req.protocol}://${req.get('host')}/api/v1/users/resetPassword/${resetToken}`,
+        ).sendPasswordReset();
         res.status(200).json({
             status: 'success',
             message: 'Token sent to email.',
@@ -183,7 +186,7 @@ const signup = catchAsync(async (req, res, next) => {
         passwordConfirm: req.body.passwordConfirm,
     });
 
-    await new Email(newUser, `${process.env.APP_URL}/me`).sendWelcome();
+    await new Email(newUser, `${req.protocol}://${req.get('host')}/me`).sendWelcome();
 
     createAndSendToken(newUser, 201, res);
 });

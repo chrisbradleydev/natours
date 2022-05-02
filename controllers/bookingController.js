@@ -33,11 +33,12 @@ const getCheckoutSession = catchAsync(async (req, res, next) => {
     const tour = await Tour.findById(req.params.tourId);
 
     // create checkout session
+    const url = `${req.protocol}://${req.get('host')}`;
     const session = await stripe.checkout.sessions.create({
         payment_method_types: ['card'],
         // temporary solution, not secure, anyone can make a booking without paying
-        success_url: `${process.env.APP_URL}/?price=${tour.price}&tour=${req.params.tourId}&user=${req.user.id}`,
-        cancel_url: `${process.env.APP_URL}/tour/${tour.slug}`,
+        success_url: `${url}/?price=${tour.price}&tour=${req.params.tourId}&user=${req.user.id}`,
+        cancel_url: `${url}/tour/${tour.slug}`,
         customer_email: req.user.email,
         client_reference_id: req.params.tourId,
         line_items: [
