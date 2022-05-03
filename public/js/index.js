@@ -4,6 +4,7 @@ import { displayMap } from './mapbox';
 import { login, logout } from './login';
 import { updateSettings } from './updateSettings';
 import { bookTour } from './stripe';
+import { showAlert } from './alerts';
 
 // dom elements
 const mapbox = document.getElementById('map');
@@ -13,6 +14,7 @@ const userDataForm = document.querySelector('.form-user-data');
 const userPasswordForm = document.querySelector('.form-user-password');
 const popupCloseButtons = document.getElementsByClassName('mapboxgl-popup-close-button');
 const bookBtn = document.getElementById('book-tour');
+const alertMessage = document.querySelector('body').dataset.alert;
 
 if (mapbox) {
     const locations = JSON.parse(mapbox.dataset.locations);
@@ -85,4 +87,8 @@ if (bookBtn) {
         const { tourId } = event.target.dataset;
         bookTour(tourId);
     });
+}
+
+if (alertMessage) {
+    showAlert('success', alertMessage, 10);
 }

@@ -4,6 +4,14 @@ const User = require('../models/userModel');
 const AppError = require('../utils/appError');
 const catchAsyc = require('../utils/catchAsync');
 
+const alerts = (req, res, next) => {
+    const { alert } = req.query;
+    if (alert === 'booking') {
+        res.locals.alert('Your booking was successful! Please check your email for a confirmation.');
+    }
+    next();
+};
+
 const getAccount = (req, res) => {
     res.status(200).render('account', {
         title: 'Account',
@@ -73,6 +81,7 @@ const updateUserData = catchAsyc(async (req, res, next) => {
 });
 
 module.exports = {
+    alerts,
     getAccount,
     getIndex,
     getLoginForm,

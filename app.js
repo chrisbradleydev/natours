@@ -16,6 +16,7 @@ const tourRouter = require('./routes/tourRoutes');
 const userRouter = require('./routes/userRoutes');
 const reviewRouter = require('./routes/reviewRoutes');
 const bookingRouter = require('./routes/bookingRoutes');
+const bookingController = require('./controllers/bookingController');
 const viewRouter = require('./routes/viewRoutes');
 
 const app = express();
@@ -119,6 +120,9 @@ const limiter = rateLimit({
     message: 'Too many requests, please try again in one hour.',
 });
 app.use('/api', limiter);
+
+// we are doing this here because we need the request body in raw format
+app.post('/webhook-checkout', express.raw({ type: 'application/json' }), bookingController.webhookCheckout);
 
 // body parser, reading data from body into req.body
 const limit = '10kb';
