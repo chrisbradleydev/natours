@@ -12,13 +12,14 @@ const signToken = id =>
         expiresIn: process.env.JWT_EXPIRES_IN,
     });
 
-const createAndSendToken = (user, statusCode, res) => {
+const createAndSendToken = (user, statusCode, req, res) => {
     const token = signToken(user._id);
 
     res.cookie('jwt', token, {
         expires: new Date(Date.now() + ms(process.env.JWT_EXPIRES_IN)),
         httpOnly: true,
-        secure: process.env.NODE_ENV === 'production',
+        // req.secure doesn't work with heroku, need to check req.headers
+        secure: req.secure || req.headers['x-forwarded-proto'] === 'https',
     });
 
     // remove password from output
@@ -104,7 +105,7 @@ const login = catchAsync(async (req, res, next) => {
     }
 
     // send token to client
-    createAndSendToken(user, 200, res);
+    createAndSendToken(user, 200, req, res);
 });
 
 const logout = catchAsync(async (req, res, next) => {
@@ -166,7 +167,7 @@ const resetPassword = catchAsync(async (req, res, next) => {
     await user.save();
 
     // send new token to client
-    createAndSendToken(user, 200, res);
+    createAndSendToken(user, 200, req, res);
 });
 
 const restrictTo =
@@ -188,7 +189,7 @@ const signup = catchAsync(async (req, res, next) => {
 
     await new Email(newUser, `${req.protocol}://${req.get('host')}/me`).sendWelcome();
 
-    createAndSendToken(newUser, 201, res);
+    createAndSendToken(newUser, 201, req, res);
 });
 
 const updatePassword = catchAsync(async (req, res, next) => {
@@ -206,7 +207,7 @@ const updatePassword = catchAsync(async (req, res, next) => {
     await user.save();
 
     // send token to client
-    createAndSendToken(user, 200, res);
+    createAndSendToken(user, 200, req, res);
 });
 
 module.exports = {

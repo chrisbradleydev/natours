@@ -22,6 +22,9 @@ app.locals.env = {
     MAPBOX_TOKEN: process.env.MAPBOX_TOKEN,
 };
 
+// heroku proxies all incoming requests
+app.enable('trust proxy');
+
 // set view engine
 app.set('view engine', 'pug');
 app.set('views', path.join(__dirname, 'views'));
