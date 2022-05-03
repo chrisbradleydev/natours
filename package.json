@@ -3,8 +3,8 @@
     "description": "Jonas Schmedtmann - Node.js, Express, MongoDB & More: The Complete Bootcamp 2021",
     "version": "1.0.0",
     "engines": {
-        "node": ">=14.0.0",
-        "npm": ">=6.0.0"
+        "node": "^14",
+        "npm": "^6"
     },
     "main": "server.js",
     "scripts": {
