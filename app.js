@@ -9,6 +9,7 @@ const xss = require('xss-clean');
 const hpp = require('hpp');
 const cookieParser = require('cookie-parser');
 const compression = require('compression');
+const cors = require('cors');
 const AppError = require('./utils/appError');
 const globalErrorHandler = require('./controllers/errorController');
 const tourRouter = require('./routes/tourRoutes');
@@ -30,6 +31,17 @@ app.set('view engine', 'pug');
 app.set('views', path.join(__dirname, 'views'));
 
 // global middleware
+// enable cors for all sites and routes
+// Access-Control-Allow-Origin: *
+app.use(cors());
+// app.use(cors({
+//     origin: 'https://natours.test',
+// }));
+
+// enable cors pre-flight
+app.options('*', cors());
+// app.options('/api/v1/tours/:id', cors());
+
 // serve static files
 app.use(express.static(path.join(__dirname, 'public')));
 
@@ -76,7 +88,7 @@ app.use(
         crossOriginEmbedderPolicy: false,
         // https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Cross-Origin-Resource-Policy
         crossOriginResourcePolicy: {
-            policy: 'same-origin',
+            policy: 'cross-origin',
         },
         // https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Strict-Transport-Security
         hsts: {
